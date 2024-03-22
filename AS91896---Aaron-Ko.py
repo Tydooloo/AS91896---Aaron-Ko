@@ -69,6 +69,7 @@ def print_all():
 
 
 def add_task():
+<<<<<<< HEAD
     """Allows user to add a new task."""
     choices = ['Yes', 'No']
     init = easygui.buttonbox('Would you like to create a new task?', choices=choices)
@@ -79,6 +80,27 @@ def add_task():
             id = 1
         title = easygui.enterbox('What would you like the title to be?')
         tasks[id] = {'Title': title}
+=======
+    output = ''
+    choices = ['Yes','No']
+    init = easygui.buttonbox('Would you like to create a new task?\
+',choices = choices)
+    if init == 'Yes': 
+        id = 6
+        tasks[id] = {}
+        title = easygui.enterbox('What would you like the title to be?')
+        tasks[id]['Title'] = title
+ 
+        description = easygui.enterbox('Please add a desciption to this task')
+        tasks[id]['Desciption'] = description
+        loop = True
+        choices = team_member.keys()
+        assignee = easygui.choicebox('Who would you like to assign this\
+ task to? Use their code', choices = choices)
+        tasks[id]['Assignee'] = assignee
+
+
+>>>>>>> 9f08c6f1681c5fdb39f1336241edd638ada4aa34
     else:
         pass
 
