@@ -69,18 +69,7 @@ def print_all():
 
 
 def add_task():
-<<<<<<< HEAD
     """Allows user to add a new task."""
-    choices = ['Yes', 'No']
-    init = easygui.buttonbox('Would you like to create a new task?', choices=choices)
-    if init == 'Yes':
-        try:
-            id = max(tasks.keys()) + 1
-        except ValueError:  # Handles the case when tasks dictionary is empty
-            id = 1
-        title = easygui.enterbox('What would you like the title to be?')
-        tasks[id] = {'Title': title}
-=======
     output = ''
     choices = ['Yes','No']
     init = easygui.buttonbox('Would you like to create a new task?\
@@ -93,27 +82,38 @@ def add_task():
  
         description = easygui.enterbox('Please add a desciption to this task')
         tasks[id]['Desciption'] = description
-        loop = True
+
         choices = team_member.keys()
         assignee = easygui.choicebox('Who would you like to assign this\
  task to? Use their code', choices = choices)
         tasks[id]['Assignee'] = assignee
 
+        choices = ['1','2','3']
+        priority = easygui.buttonbox('To what level of priority would\
+ you like to make it?',choices = choices )
+        tasks[id]['Priority'] = str(priority)
 
->>>>>>> 9f08c6f1681c5fdb39f1336241edd638ada4aa34
+        choices = ['In Progress','Blocked','Not Started']
+        status = easygui.buttonbox('To what level of priority would\
+ you like to make it?', choices = choices )
+        tasks[id]['Status'] = status
+        
+
+
+
+        
+
+        
+
+
+while True:
+    choices = ['Print all', 'Add task', 'Exit']
+    selected_choice = easygui.buttonbox("Welcome to the Tasks database.\
+    What would you like to do?", choices=choices)
+
+    if selected_choice == 'Print all':
+        print_all()
+    elif selected_choice == 'Add task':
+        add_task()
     else:
-        pass
-
-
-if __name__ == '__main__':
-    while True:
-        choices = ['Print all', 'Add task']
-        selected_choice = easygui.buttonbox("Welcome to the Tasks database.\
-        What would you like to do?", choices=choices)
-
-        if selected_choice == 'Print all':
-            print_all()
-        elif selected_choice == 'Add task':
-            add_task()
-        else:
-            break
+        break
