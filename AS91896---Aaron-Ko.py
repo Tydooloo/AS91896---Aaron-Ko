@@ -74,7 +74,7 @@ def add_task():
     id = 0
     choices = ['Yes','No']
     init = easygui.buttonbox('Would you like to create a new task?\
-',choices = choices)
+', choices = choices)
     if init == 'Yes':
         for key in tasks.keys():
             if key > id:
@@ -86,30 +86,41 @@ def add_task():
  
         description = easygui.enterbox('Please add a desciption to this task')
         output[id]['Desciption'] = description
-
-        assignee = easygui.enterbox('Who would you like to assign this\
- task to? Use their code')
-        assignee = assignee.upper()
         while True:
-            if assignee in team_member.keys:
+            assignee = easygui.enterbox('Who would you like to assign this\
+ task to? Use their code')
+            assignee = assignee.upper()
+            a = []
+            for i in team_member.keys():
+                a.append(i)
+            if assignee in a:
                 break
             else:
                 easygui.msgbox('Code not found, Please Try again')
         output[id]['Assignee'] = assignee
 
-        priority = easygui.integerbox('To what level of priority would\
- you like to make it? From 1 - 3')
         while True:
-            if priority in range(1,3):
+            priority = easygui.integerbox('To what level of priority would\
+ you like to make it? From 1 - 3')
+            if priority in range(1,4) :
                 break
             else:
                 easygui.msgbox('Invalid number, Please Try again')
-        tasks[id]['Priority'] = priority
+        output[id]['Priority'] = priority
 
         choices = ['In Progress','Blocked','Not Started']
         status = easygui.buttonbox('To what level of priority would\
  you like to make it?', choices = choices )
-        tasks[id]['Status'] = status
+        output[id]['Status'] = status
+    
+    choices = ['Yes','No']
+    authorization = easygui.buttonbox(f'Would you like to create the following new\
+ task?:\n{output}',choices = choices)
+    if authorization == 'Yes':
+        tasks =+ output
+    else:
+        easygui.msgbox('This task will be deleted')
+
         
 
 # just here how show the final deleted movies thing
