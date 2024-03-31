@@ -70,34 +70,89 @@ def print_all():
 
 def add_task():
     """Allows user to add a new task."""
-    output = ''
+    output = {}
+    id = 0
     choices = ['Yes','No']
     init = easygui.buttonbox('Would you like to create a new task?\
-',choices = choices)
-    if init == 'Yes': 
-        id = 6
-        tasks[id] = {}
+', choices = choices)
+    if init == 'Yes':
+        for key in tasks.keys():
+            if key > id:
+                id = key
+        id += 1
+        output[id] = {}
         title = easygui.enterbox('What would you like the title to be?')
-        tasks[id]['Title'] = title
+        output[id]['Title'] = title
  
         description = easygui.enterbox('Please add a desciption to this task')
-        tasks[id]['Desciption'] = description
+        output[id]['Desciption'] = description
+        while True:
+            assignee = easygui.enterbox('Who would you like to assign this\
+ task to? Use their code')
+            assignee = assignee.upper()
+            a = []
+            for i in team_member.keys():
+                a.append(i)
+            if assignee in a:
+                break
+            else:
+                easygui.msgbox('Code not found, Please Try again')
+        output[id]['Assignee'] = assignee
 
-        choices = team_member.keys()
-        assignee = easygui.choicebox('Who would you like to assign this\
- task to? Use their code', choices = choices)
-        tasks[id]['Assignee'] = assignee
-
-        choices = ['1','2','3']
-        priority = easygui.buttonbox('To what level of priority would\
- you like to make it?',choices = choices )
-        tasks[id]['Priority'] = str(priority)
+        while True:
+            priority = easygui.integerbox('To what level of priority would\
+ you like to make it? From 1 - 3')
+            if priority in range(1,4) :
+                break
+            else:
+                easygui.msgbox('Invalid number, Please Try again')
+        output[id]['Priority'] = priority
 
         choices = ['In Progress','Blocked','Not Started']
         status = easygui.buttonbox('To what level of priority would\
  you like to make it?', choices = choices )
+<<<<<<< HEAD
         tasks[id]['Status'] = status
 
+=======
+        output[id]['Status'] = status
+    
+    choices = ['Yes','No']
+    authorization = easygui.buttonbox(f'Would you like to create the following new\
+ task?:\n{output}',choices = choices)
+    if authorization == 'Yes':
+        tasks =+ output
+    else:
+        easygui.msgbox('This task will be deleted')
+
+        
+>>>>>>> c666fd0fdafa2cd315e0272ee805dc21c4191189
+
+# just here how show the final deleted movies thing
+
+def update_task():
+    '''similar to add just methodically going thorugh each one'''
+    output  = ''
+    choice = []
+    edit_options_choices = []
+    for key, value in Movies.items():
+        choice.append(key)
+
+    movie_to_edit = easygui.buttonbox('What movie would you like to edit?'\
+    , choices = choice, title = 'Movie Update selection')
+
+    for key1, value in Movies[movie_to_edit].items():  
+        edit_options_choices.append(key1)
+
+    edit_options = easygui.buttonbox('What part of the movie would\
+ you like to edit?', 
+    choices = edit_options_choices, title = 'Edit Options')
+
+    for key, value in Movies[movie_to_edit].items():  
+        if key == edit_options:
+            new_value = easygui.enterbox(f"What would you like to\
+ change '{key}' to?")
+            Movies[movie_to_edit][key] = new_value
 
 
 
@@ -107,7 +162,7 @@ def add_task():
 
 
 while True:
-    choices = ['Print all', 'Add task', 'Exit']
+    choices = ['Print all', 'Add task','Update task', 'Exit']
     selected_choice = easygui.buttonbox("Welcome to the Tasks database.\
     What would you like to do?", choices=choices)
 
@@ -115,5 +170,7 @@ while True:
         print_all()
     elif selected_choice == 'Add task':
         add_task()
+    elif selected_choice == 'Update task':
+        update_task()
     else:
         break
