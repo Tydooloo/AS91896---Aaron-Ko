@@ -97,7 +97,7 @@ def add_task():
         status = easygui.buttonbox('To what level of priority would\
  you like to make it?', choices = choices )
         tasks[id]['Status'] = status
-        
+
 
 
 
