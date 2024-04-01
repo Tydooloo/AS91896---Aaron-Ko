@@ -58,7 +58,7 @@ team_member = {
 
 
 def print_all(tasks):
-    """Prints all tasks with their details."""
+    """prints all tasks with their details"""
     output = ''
     for key, value in tasks.items():
         output += f'{key}\n'
@@ -69,11 +69,13 @@ def print_all(tasks):
 
 def print_report(tasks):
     """Shows the number of tasks for each status"""
+    # all needed variabled initialized 
     output = ''
     in_progress = ''
     blocked = ''
     not_started = ''
 
+    # Iterate over tasks keys that we can extract the statuses from each one
     for key in tasks.keys():
         if tasks[key]['Status'] == 'In Progress':
             in_progress += f'Task {str(key)}, '
@@ -81,6 +83,7 @@ def print_report(tasks):
             blocked += f'Task {str(key)}, '
         elif tasks[key]['Status'] == 'Not Started':
             not_started += f'Task {str(key)}, '
+    # finalizing by inputting into output variable
     output += f'Tasks in progress:{in_progress}\n'
     output += f'Tasks blocked:{blocked}\n'
     output += f'Tasks not started:{not_started}\n'
@@ -92,8 +95,8 @@ def print_report(tasks):
 def add_task(tasks, team_member):
     """add a new task."""
     output = {}
-    # taking the highest value in the tasks dict keys and adding one for the new id (so that it is chronological)
-    id = max(tasks.keys()) + 1 if tasks else 1
+    # taking the highest value in the tasks dict keys and adding one for the new id (so that it is chronological
+    id = max(tasks.keys()) + 1 if tasks else 1 # checking if the tasks dict is empty or not
     # Procceding to add all the necessery values in one by one
     title = easygui.enterbox('What would you like the title to be?')
     output[id] = {'Title': title}
@@ -104,10 +107,15 @@ def add_task(tasks, team_member):
     # comfort for the user so that they do not have to redo the whole function again if they make a mistake
     while True:
         assignee = easygui.enterbox('Who would you like to assign this task to? Use their code')
+        # these Nonetype if statements are everywhere to ensure the code does not break when exited
+        if assignee == None:
+            break
         # case sensitivity
         assignee = assignee.upper()
         # checking 
         if assignee in team_member:
+            # Update the 'Tasks Assigned' list for the corresponding team member
+            team_member[assignee]['Tasks Assigned'].append(id)
             break
         else:
             easygui.msgbox('Code not found, Please Try again')
@@ -116,6 +124,8 @@ def add_task(tasks, team_member):
 
     while True:
         priority = easygui.integerbox('To what level of priority would you like to make it? From 1 - 3')
+        if priority == None:
+            break
         # valid inside of boundary
         if priority in range(1, 4):
             break
@@ -127,9 +137,6 @@ def add_task(tasks, team_member):
     status = easygui.buttonbox('To what status would you like to make it?', choices=choices)
     output[id]['Status'] = status
 
-    # Update the 'Tasks Assigned' list for the corresponding team member
-    team_member[assignee]['Tasks Assigned'].append(id)
-
     # double checking with user
     authorization = easygui.buttonbox(f'Would you like to create the following new task?:\n{output}', choices=['Yes', 'No'])
     if authorization == 'Yes':
@@ -137,6 +144,7 @@ def add_task(tasks, team_member):
         tasks.update(output)
     else:
         easygui.msgbox('This task will be deleted')
+    # depended of the conditional statement right before, it will return a changed task dict or unchanged
     return tasks, team_member
 
 def update_task(tasks, team_member):
@@ -166,8 +174,11 @@ def update_task(tasks, team_member):
     edit_options_choices = list(tasks[task_to_edit].keys())
     edit_options = easygui.buttonbox('What part of the task would you like to edit? (please do not exit)', choices=edit_options_choices,
                                      title='Edit Options')
-
-    new_value = easygui.enterbox(f"What would you like to change '{edit_options}' to?")
+    # if the user attempts to exit
+    if edit_options == None:
+        pass
+    else:
+        new_value = easygui.enterbox(f"What would you like to change '{edit_options}' to?")
 
     # If assignee is changed, update team_member dictionary
     if edit_options == 'Assignee':
@@ -177,6 +188,8 @@ def update_task(tasks, team_member):
         if old_assignee != new_value:
             team_member[new_value]['Tasks Assigned'].append(task_to_edit)
             team_member[old_assignee]['Tasks Assigned'].remove(task_to_edit)
+    elif edit_options == None:
+        pass
     else:
         # adding the new_value into the 'edit_options' section of the nested dictionary
         tasks[task_to_edit][edit_options] = new_value
@@ -185,33 +198,36 @@ def update_task(tasks, team_member):
     return tasks, team_member
 
 def search(tasks):
+
     criteria = easygui.enterbox("Search by criteria (title, assignee, priority, status)")
     
-    # Check if the criteria is a valid key in the nested dictionary keys using the first task as an example
-    if criteria.capitalize() not in tasks[1].keys():
-        easygui.msgbox("Invalid criteria. Please try again.")
-        return
+    if criteria is not None:
+     # Check if the criteria is a valid key in the nested dictionary keys using the first task as an example
+        if criteria.capitalize() not in tasks[1].keys():
+            easygui.msgbox("Invalid criteria. Please try again.")
+            return
     
-    # specify the search value
-    search_value = easygui.enterbox(f"Enter the {criteria.capitalize()} to search for:")
+        # specify the search value
+        search_value = easygui.enterbox(f"Enter the {criteria.capitalize()} to search for:")
 
-    # Initialize a flag to indicate if any matches were found
-    found = False
+        # Initialize a flag to indicate if any matches were found
+        found = False
 
-    # Iterate over the tasks and print those matching the search criteria
-    output = ''
-    for task_id, task in tasks.items():
-        if str(task.get(criteria.capitalize(), '')).lower() == str(search_value).lower():
-            output += f'Task ID: {task_id}\n'
-            for aspect, information in task.items():
-                output += f'{aspect} : {information}\n'
-            output += '\n'
-            found = True
-    easygui.msgbox(output)
+        # Iterate over the tasks and print those matching the search criteria
+        output = ''
+        for task_id, task in tasks.items():
+            if str(task.get(criteria.capitalize(), '')).lower() == str(search_value).lower():
+                output += f'Task ID: {task_id}\n'
+                for aspect, information in task.items():
+                    output += f'{aspect} : {information}\n'
+                output += '\n'
+                found = True
 
-    # if no matches were found, display a message
-    if not found:
-        easygui.msgbox("No tasks found matching the search criteria")
+        # if no matches were found, display a message
+        if not found:
+            easygui.msgbox("No tasks found matching the search criteria")
+        else:
+            easygui.msgbox(output)
 
 
 
