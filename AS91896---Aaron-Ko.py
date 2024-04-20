@@ -1,4 +1,5 @@
 import easygui
+
 tasks = {
     'T1': {
         'Title': 'Design Homepage',
@@ -36,6 +37,7 @@ tasks = {
         'Status': 'Blocked'
     }
 }
+
 team_member = {
     'JSM': {
         'Name': 'John Smith',
@@ -195,14 +197,8 @@ class task_management():
                 # Update the task status
                 self.tasks[task_id]['Status'] = status
                 
-
-        
-
-        
-
     def search(self):
         pass
-
 
     def generate_report(self):
         # initializing a counter 
@@ -214,8 +210,6 @@ class task_management():
             # creates a list (list comprehension) of status, count pairs and joins em as a str
         report_text = '\n'.join(f"{status} Tasks: {count}" for status, count in status_counts.items())
         easygui.msgbox(report_text)
-
-
 
     def print_all(self):
         output = ''
@@ -229,8 +223,6 @@ class task_management():
             for information, info in details.items():
                 output += f'{information} : {info}\n'
         easygui.msgbox(output)
-
-
 
 # Start
 get = task_management(tasks)
