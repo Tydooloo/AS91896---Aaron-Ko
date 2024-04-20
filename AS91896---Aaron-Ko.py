@@ -59,36 +59,44 @@ class task_management():
         # making tasks a global object within the class
         self.tasks = tasks
         # output will allow the user to double check
-        self.output = {}
     
     def add_task(self):
+        output_verification = ''
+        output = {}
         # using  list comprehension, it looks through all IDs, extracts numeric value
         # and max() finds the highest one then +1 as it is sequentially unique
-        self.ID = max(int(key[1]) for key in self.tasks.keys()) + 1
-        output_verification = ''
+        ID = max(int(key[1]) for key in self.tasks.keys()) + 1
 
+        # adding returned values into variables
+        # Check if any field is None (indicating user canceled)
         # exits the function if 'x' or cancel is pressed at anytime
-        if not self.title():
+        title = self.title()
+        if title is None:
             return
-        if not self.description():
+        description = self.description()
+        if description is None:
             return
-        if not self.assignee():
+        assignee = self.assignee()
+        if assignee is None:
             return
-        if not self.priority():
+        priority = self.priority()
+        if priority is None:
             return
-        if not self.status():
+        status = self.status()
+        if status is None:
             return
-        # calling each function inside of output 
-        self.output[f'T{self.ID}'] = {
-            'Title': self.title(),
-            'Description': self.description(),
-            'Assignee': self.assignee(),
-            'Priority': self.priority(),
-            'Status': self.status()
+        
+        # Add the task to output
+        output[f'T{ID}'] = {
+            'Title': title,
+            'Description': description,
+            'Assignee': assignee,
+            'Priority': priority,
+            'Status': status
         }
-
+        
         # making the verification page look good (could have used an inlined for loop up it would be too long)
-        for id, tasks in self.output.items():
+        for id, tasks in output.items():
             output_verification += f'\n{id}\n'
             for task_details, value in tasks.items():
                 output_verification += f'{task_details} : {value}\n'
@@ -98,48 +106,36 @@ class task_management():
 
         if verification == 'Yes':
             # to add the output to the tasks dictionary we use update() function
-            self.tasks.update(self.output)
+            self.tasks.update(output)
         else:
             return
         # reset so that add task can be used again
-        self.output = {}
+        output = {}
 
     # make these in functions so that I dont have to reuse them for update function 
     def title(self):
         title = easygui.enterbox('Please enter your title')
-        # checking if the user hits 'x' or the cancel button
-        if title is None:
-            return
         # making sure the dictionary is consistant
         return title
 
     def description(self):
         # adding desciption using the same method as the title
         description = easygui.enterbox('Please enter your description')
-        if description is None:
-            return
         return description 
 
     def assignee(self):
         # adding assignee using choicebox
-        choices = list(team_member.keys())
-        assignee = easygui.choicebox('Please choose your assignees code', choices = choices)
-        if assignee is None:
-            return
+        assignee = easygui.choicebox('Please choose your assignees code', choices = list(team_member.keys()))
         return assignee
     
     def priority(self):
         # adding priority rating using buttonbox
         priority = easygui.buttonbox('Please choose your priority', choices = ['1','2','3'])
-        if priority is None:
-            return
         return priority
 
     def status(self):
         # adding status
         status = easygui.buttonbox('Please choose your Status', choices = ['Not Started','Blocked','In Progress', 'Completed'])
-        if status is None:
-            return
         return status
 
     def update_task(self):
@@ -211,7 +207,7 @@ class task_management():
     def generate_report(self):
         # initializing a counter 
         status_counts = {'Completed': 0, 'In Progress': 0, 'Blocked': 0, 'Not Started':0}
-        # looking through all the task values
+        # through all the task values
         for task in self.tasks.values():
             # adding counter to corresponding values in 'status'
             status_counts[task['Status']] += 1
@@ -238,4 +234,6 @@ class task_management():
 
 # Start
 get = task_management(tasks)
+get.add_task()
+get.update_task()
 get.print_all()
