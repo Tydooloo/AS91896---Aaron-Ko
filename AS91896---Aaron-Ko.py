@@ -57,10 +57,8 @@ team_member = {
 }
 
 class task_management():
-    def __init__(self, tasks):
-        # making tasks a global object within the class
+    def __init__(self,tasks):
         self.tasks = tasks
-        # output will allow the user to double check
     
     def add_task(self):
         output_verification = ''
@@ -139,34 +137,14 @@ class task_management():
         # adding status
         status = easygui.buttonbox('Please choose your Status', choices = ['Not Started','Blocked','In Progress', 'Completed'])
         return status
-
-    def update_task(self):
-        # adding the ID AND title of task for easier navigation
-        choices = []
-        info = ''
-        for ID, details in tasks.items():
-            # adding ID of given iteration
-            info += ID
-            for key, value in details.items():
-                # this will add the actual title(value) into info
-                if key == 'Title':
-                    info += f' : {value}'
-            choices.append(info)
-            # resetting info to avoid tasks stacking up in one value of list
-            info = ''
     
-        task_to_update = easygui.choicebox("What task would you like to Update", choices = choices)
-        # makes sure that the any NoneTypes can't cause errors
-        if task_to_update == None:
+    def update_task(self):
+        task_id = self.ID_title()
+        if task_id == None:
             return
         task_section_to_update = easygui.choicebox("What part of the task would you like to update?", choices = ['Title','Description','Assignee','Priority','Status'])
         if task_section_to_update == None:
             return
-        # get the task ID from task_to_update 
-        # split at ':' get the first value [0] in the list and then strip white space out after
-        task_id = task_to_update.split(':')[0].strip()
-
-
         # calling all functions based of task_section_to_update
         if task_section_to_update == 'Title':
             title = self.title()
@@ -198,7 +176,33 @@ class task_management():
                 self.tasks[task_id]['Status'] = status
                 
     def search(self):
-        pass
+        options = easygui.buttonbox('What would you like search for?', choices = ['Task','Team member'])
+        if options == 'Task':
+            # Calling ID_title() function
+            task_id = self.ID_title()
+            if task_id == None:
+                return
+            easygui.msgbox('\n'.join(f'{key} : {value}' for id, details in self.tasks.items() for key,value in details.items() if id == task_id))  
+        elif options == 'Team member':
+            team_member_selected = easygui.choicebox('Please select their code', choices = list(team_member.keys()))
+            if team_member == None:
+                return
+            easygui.msgbox('\n'.join(f'{key} : {value}' for code, details in team_member.items() for key,value in details.items() if code == team_member_selected))         
+        else:
+            return
+        
+    def ID_title(self):
+        # adding the ID AND title of task for easier navigation
+        tasks_title = [f"{ID} : {details['Title']}" for ID, details in self.tasks.items()]
+        task_selected = easygui.choicebox("What task would you like select?", choices = tasks_title)
+        # makes sure that the any NoneTypes can't cause errors
+        if task_selected == None:
+            return
+        # get the task ID from task_selected 
+        # split at ':' get the first value [0] in the list and then strip white space out after
+        task_id = task_selected.split(':')[0].strip()
+        return task_id
+
 
     def generate_report(self):
         # initializing a counter 
@@ -224,8 +228,24 @@ class task_management():
                 output += f'{information} : {info}\n'
         easygui.msgbox(output)
 
+
+
 # Start
 get = task_management(tasks)
-get.add_task()
-get.update_task()
-get.print_all()
+while True:
+    choices = ['All Information','Add Task','Update Task','Search', 'Report','Exit']
+    choice = easygui.buttonbox('What would you like to do?', choices = choices)
+    if choice == 'All Information':
+        get.print_all()
+    elif choice == 'Add Task':
+        get.add_task()
+    elif choice == 'Update Task':
+        get.update_task()
+    elif choice == 'Search':
+        get.search()
+    elif choice == 'Report':
+        get.generate_report()
+    else: 
+        break
+
+
